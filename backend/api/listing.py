@@ -221,7 +221,9 @@ class Listing(Resource):
         Returns:
             json[]: A list of jsonified listings.
         """
-
+        auth_error = auth.unauthorized_headers(headers)
+        if auth_error:
+            return auth_error
         ids = ids.split(",")
         for id_ in range(0, len(ids)):
             ids[id_] = int(ids[id_])
@@ -242,7 +244,8 @@ class Listing(Resource):
         Returns:
             message: What happened with the post call.
         """
-
+        auth_error = auth.google_tok_mismatch_headers(google_tok, request.headers)
+        if auth_error: return auth_error
         # what the user will send to the post request (in good format)
         data = Listing.parser.parse_args()
         # In our case, the user sends the price as JSON, but the item name gets passed into the function
@@ -274,7 +277,8 @@ class Listing(Resource):
         Returns:
             message: What happened with the delete call.
         """
-
+        auth_error = auth.google_tok_mismatch_headers(google_tok, request.headers)
+        if auth_error: return auth_error
         id_ = int(ids)
         item = ListingModel.find_by_listing_id(ids)
         if item:
@@ -298,6 +302,8 @@ class Listing(Resource):
             json: A jsonified listing object representing what was put.
         """
 
+        auth_error = auth.google_tok_mismatch_headers(google_tok, request.headers)
+        if auth_error: return auth_error
         data = Listing.parser.parse_args()  # only add valid JSON requests into data
 
         if(listing_id):

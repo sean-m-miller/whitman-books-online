@@ -200,7 +200,8 @@ class User(Resource):
                 json[]: A list of jsonified users.
         """
         auth_error = auth.unauthorized_headers(request.headers)
-        if auth_error: return auth_error
+        if auth_error:
+            return auth_error
         user = UserModel.find_by_google_tok(google_tok)
         listing_IDs = []
         if user:
@@ -264,8 +265,9 @@ Attributes:
         Returns:
                 json[]: A list of jsonified users that match the tokens.
         """
-        auth_error = auth.google_tok_mismatch_headers(google_tok, request.headers)
-        if auth_error: return auth_error
+        auth_error = auth.unauthorized_headers(request.headers)
+        if auth_error:
+            return auth_error
         tokens = tokens.split(",")
         all_users = UserModel.query.filter(
             UserModel.google_tok.in_(tokens)).all()
